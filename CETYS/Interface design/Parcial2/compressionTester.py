@@ -35,19 +35,22 @@ bus = smbus.SMBus(1)
 while True:
 
 	if gpio.input(startPin):
+		print('iniciar Sample')
 		sampleNumber += 1
 		tensionData = []
 		compresionData = []
 		desplazamientoData = []
 		data = {}
-º		start = time()
-		while stopPin != 1:
+		start = time.time()
+		while True:
+			if gpio.input(stopPin) == 1:
+				break
 			# Leer sensor tension
 			bus.write_byte(address,a0)
 			value = bus.read_byte(address)
-			tensionOut = (vref*value)/255
+			tensionOut = (vRef*value)/255
 			tensionData.append(tensionOut)
-			print(tensionOut)
+			#print(tensionOut)
 			time.sleep(0.1)
 
 			# Leer sensor Compresion
@@ -66,9 +69,10 @@ while True:
 #			print(desplazamientoOut)
 #			time.sleep(0.1)
 
-			time.sleep(3)
-			print ("")
+			#time.sleep(3)
+			#print ("")
 
+		print('preparando para enviar')
 		final = time.time()
 		timePassed = final - start
 		data['sampleNumber'] = sampleNumber
@@ -78,3 +82,4 @@ while True:
 #		data['desplazamiento'] = desplazamientoData
 
 		data2send = json.dumps(data)
+		print(data2send)
