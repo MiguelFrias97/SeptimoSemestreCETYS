@@ -4,6 +4,21 @@ import time
 import json
 import time
 
+def counter():
+	try:
+		with open("api.txt","r+") as f:
+			value = int(f.read())
+			f.seek(0)
+			f.write(str(value + 1))
+		f.close()
+	except:
+		f = open("api.txt",'w')
+		value = 1
+		f.write(str(value))
+		f.close()
+	return value
+
+
 # Setting GPIO
 gpio.setmode(gpio.BOARD)
 gpio.setwarnings(False)
@@ -24,19 +39,17 @@ a2 = 0x42
 ## a3 = 0x43
 
 # Setting bit de inicio y baja
-startPin = 23
-stopPin = 24
+startPin = 37
+stopPin = 38
 gpio.setup(startPin, gpio.IN)
 gpio.setup(stopPin, gpio.IN)
-
-sampleNumber = 0
 
 bus = smbus.SMBus(1)
 while True:
 
 	if gpio.input(startPin):
+		id = counter()
 		print('iniciar Sample')
-		sampleNumber += 1
 		tensionData = []
 		compresionData = []
 		desplazamientoData = []
@@ -51,7 +64,7 @@ while True:
 			tensionOut = (vRef*value)/255
 			tensionData.append(tensionOut)
 			#print(tensionOut)
-			time.sleep(0.1)
+#			time.sleep(0.1)
 
 			# Leer sensor Compresion
 #			bus.write_byte(address, a1)
@@ -62,24 +75,24 @@ while True:
 #			time.sleep(0.1)
 
 			# Leer sensor Desplazamiento
-#			bus.write_byte(address,a2)
-#			value = bus.read_byte(address)
-#			desplazamientoOut = (vRef*value)/255
-#			desplazamientoData.append(desplazamientoOut)
+			bus.write_byte(address,a2)
+			value = bus.read_byte(address)
+			desplazamientoOut = (vRef*value)/255
+			desplazamientoData.append(desplazamientoOut)
 #			print(desplazamientoOut)
 #			time.sleep(0.1)
 
-			#time.sleep(3)
+			time.sleep(0.1)
 			#print ("")
 
 		print('preparando para enviar')
 		final = time.time()
 		timePassed = final - start
-		data['sampleNumber'] = sampleNumber
+		data['testId']= id
 		data['timePassed'] = timePassed
 		data['tension'] = tensionData
-#		data['compresion'] = compresionData
-#		data['desplazamiento'] = desplazamientoData
+		data['compresion'] = compresionData
+		data['desplazamiento'] = desplazamientoData
 
 		data2send = json.dumps(data)
 		print(data2send)
