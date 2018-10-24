@@ -1,19 +1,45 @@
 import time
 from functionsClient import *
 
-port = 50000
-host = "10.12.18.139"
+host = "192.168.1.67"
 bufferSize = 1024
 
-s = createSocket(port,host)
-receiveData(s,bufferSize)
-data = raw_input()
-sendData(s,data)
-receiveData(s,bufferSize)
-receiveData(s,bufferSize)
-filename = raw_input()
-sendData(s,filename)
-receiveFile(s,filename)
-#sendData(s,"File Received")
+def receivingFile(port,host,bufferSize):
+	s = createSocket(port,host)
+	receiveData(s,bufferSize)
+	data = raw_input()
+	sendData(s,data)
+	receiveData(s,bufferSize)
+	receiveData(s,bufferSize)
+	filename = raw_input()
+	sendData(s,filename)
+	receiveFile(s,filename)
+	disconnect(s)
+	s = None
 
-disconnect(s)
+def again(port,host,bufferSize):
+	s = createSocket(port,host)
+	receiveData(s,bufferSize)
+	answer = raw_input()
+	sendData(s,answer)
+	disconnect(s)
+	s = None
+	return answer
+
+if __name__=="__main__":
+	ports = [50000,8000,9000,8001,8080,51000]
+	index = 0
+	index2 = -1
+	while True:
+		receivingFile(ports[index],host,bufferSize)
+		time.sleep(1)
+		index += 1
+		if index > len(ports)-1:
+			index = 0
+		answer = again(ports[index2],host,bufferSize)
+		time.sleep(1)
+		index2 -= 1
+		if index2 < -1*(len(ports)-1):
+			index2 = -1
+		if answer != 'y':
+			break
