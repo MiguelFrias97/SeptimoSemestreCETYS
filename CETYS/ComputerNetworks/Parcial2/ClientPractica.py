@@ -1,7 +1,8 @@
 import time
 from functionsClient import *
 
-host = "192.168.1.67"
+#host = "192.168.1.67" #casa
+host = "10.12.18.139" #cetys
 bufferSize = 1024
 
 def receivingFile(port,host,bufferSize):
