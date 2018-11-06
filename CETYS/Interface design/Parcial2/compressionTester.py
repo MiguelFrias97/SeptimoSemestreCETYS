@@ -25,7 +25,7 @@ def counter():
 		f.close()
 	return value
 
-def readSensor():
+def readSensor(endpoint):
 	global startR
 	global stopR
 	# Setting GPIO
@@ -112,35 +112,30 @@ def readSensor():
 			data2send = json.dumps(data)
 			print(data2send)
 
+			requests.post(endpoint,data2send)
+
 def requestAPI(endpoint):
 	global startR
 	global stopR
-	r = requests.get(url=endpoint)
-	data = r.json()
-	print(data['query']['results']['channel']['location']['city'])
-	lock.acquire()
-	print(startR)
-	if data['query']['results']['channel']['location']['city']  == 'Tijuana':
-		startR = True
-	print(startR)
-	lock.release()
+	while True:
+		r = requests.get(url=endpoint)
+		data = int(r.text[1:2])
+		lock.acquire()
+		print(startR)
+		if data == 1:
+			startR = True
+			stopR = False
+		elif data == 0:
+			stopR = True
+			startR = False
+		print(startR)
+		lock.release()
 
-	time.sleep(5)
-
-	endpoint = 'https://query.yahooapis.com/v1/public/yql?q=select%20*%20from%20weather.forecast%20where%20woeid%20in%20(select%20woeid%20from%20geo.places(1)%20where%20text%3D%22nome%2C%20ak%22)&format=json&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys'
-	r = requests.get(url=endpoint)
-	data = r.json()
-	print(data['query']['results']['channel']['location']['city'])
-	lock.acquire()
-	print(stopR)
-	if data['query']['results']['channel']['location']['city']!='Tijuana':
-		stopR = True
-	print(stopR)
-	lock.release()
-		# Obtener el valor de startR y stopR
+		time.sleep(0.1)
 
 if __name__=="__main__":
-	endpoint =' https://query.yahooapis.com/v1/public/yql?q=select%20*%20from%20weather.forecast%20where%20woeid%20in%20(select%20woeid%20from%20geo.places(1)%20where%20text%3D%22tijuana%22)&format=json&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys'
+	#endpoint =' https://query.yahooapis.com/v1/public/yql?q=select%20*%20from%20weather.forecast%20where%20woeid%20in%20(select%20woeid%20from%20geo.places(1)%20where%20text%3D%22tijuana%22)&format=json&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys'
+	endpoint = 'http://10.12.10.191/API/Test'
 
 #	startR = False
 #	stopR = False
@@ -153,7 +148,7 @@ if __name__=="__main__":
 	tRequest.start()
 
 	threads = []
-	tRead = Thread(target=readSensor)
+	tRead = Thread(target=readSensor,args=('http://10.12.10.191/API/Sensors',))
 	threads.append(tRead)
 	tRead.start()
 
