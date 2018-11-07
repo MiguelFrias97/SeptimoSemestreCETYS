@@ -2,6 +2,7 @@ import RPi.GPIO as gpio
 import smbus
 import time
 import json
+import datetime
 import time
 import requests
 
@@ -103,16 +104,19 @@ def readSensor(endpoint):
 			print('preparando para enviar')
 			final = time.time()
 			timePassed = final - start
-			data['testId']= id
-			data['timePassed'] = timePassed
-			data['tension'] = tensionData
-			data['compresion'] = compresionData
-			data['desplazamiento'] = desplazamientoData
+			data['id']= id
+			#data['timePassed'] = timePassed
+			data['date']=datetime.datetime.now().strftime("%d/%-m/%Y %H:%M:%S")
+			data['strain'] = tensionData
+			#data['compresion'] = compresionData
+			data['displacement'] = desplazamientoData
 
 			data2send = json.dumps(data)
+			headers={'Content-Type':"application/json"}
 			print(data2send)
 
-			requests.post(endpoint,data2send)
+			response= requests.request("POST",url=endpoint,data=data2send,headers=headers)
+			print(response)
 
 def requestAPI(endpoint):
 	global startR
