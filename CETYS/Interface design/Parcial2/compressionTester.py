@@ -137,6 +137,20 @@ def requestAPI(endpoint):
 
 		time.sleep(0.1)
 
+def PowerOn():
+	global startR
+	global stopR
+	while True:
+		lock.acquire()
+		if gpio.input(startPin):
+			startR=True
+			stopR=False
+		elif gpio.input(stopPint):
+			startR=False
+			stopR=True
+		lock.release()
+		time.sleep(0.1)
+
 if __name__=="__main__":
 	#endpoint =' https://query.yahooapis.com/v1/public/yql?q=select%20*%20from%20weather.forecast%20where%20woeid%20in%20(select%20woeid%20from%20geo.places(1)%20where%20text%3D%22tijuana%22)&format=json&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys'
 	endpoint = 'http://10.12.10.191/API/Test'
@@ -151,11 +165,13 @@ if __name__=="__main__":
 	threads.append(tRequest)
 	tRequest.start()
 
-	threads = []
-	tRead = Thread(target=readSensor,args=('http://10.12.10.191/API/Sensors',))
-	threads.append(tRead)
-	tRead.start()
+#	tRead = Thread(target=readSensor,args=('http://10.12.10.191/API/Sensors',))
+#	threads.append(tRead)
+#	tRead.start()
 
+	tReadManual = Thread(target=PowerOn)
+	threads.append(tReadManual)
+	tReadManual.start()
 #	if gpio.input(startPin):
 #		for thread in threads:
 #			thread.join()
