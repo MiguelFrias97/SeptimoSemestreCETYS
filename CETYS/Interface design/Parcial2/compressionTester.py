@@ -58,7 +58,8 @@ def readSensor(endpoint):
 
 	while True:
 		#print("Lectura de sensor: ",startR)
-		if startR:
+#		if startR:
+		if gpio.input(startPin):
 			id = counter()
 			print('iniciar Sample')
 			tensionData = []
@@ -69,7 +70,8 @@ def readSensor(endpoint):
 			while True:
 				#lock.acquire()
 				#lock.release()
-				if stopR:
+#				if stopR:
+				if gpio.input(stopPin):
 					break
 				# Leer sensor tension
 				bus.write_byte(address,a0)
@@ -161,17 +163,17 @@ if __name__=="__main__":
 
 	threads = []
 
-	tRequest = Thread(target=requestAPI,args=(endpoint,))
-	threads.append(tRequest)
-	tRequest.start()
+#	tRequest = Thread(target=requestAPI,args=(endpoint,))
+#	threads.append(tRequest)
+#	tRequest.start()
 
-#	tRead = Thread(target=readSensor,args=('http://10.12.10.191/API/Sensors',))
-#	threads.append(tRead)
-#	tRead.start()
+	tRead = Thread(target=readSensor,args=('http://10.12.10.191/API/Sensors',))
+	threads.append(tRead)
+	tRead.start()
 
-	tReadManual = Thread(target=PowerOn)
-	threads.append(tReadManual)
-	tReadManual.start()
+#	tReadManual = Thread(target=PowerOn)
+#	threads.append(tReadManual)
+#	tReadManual.start()
 #	if gpio.input(startPin):
 #		for thread in threads:
 #			thread.join()
