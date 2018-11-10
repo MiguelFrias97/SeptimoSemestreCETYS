@@ -34,7 +34,7 @@ def readSensor(endpoint):
 	gpio.setwarnings(False)
 
 	# Voltaje de referencia para regla de tres
-	vRef = 5
+	vRef = 8
 
 	# Direccion del dispositivo i2c
 	address = 0x48
@@ -76,7 +76,7 @@ def readSensor(endpoint):
 				# Leer sensor tension
 				bus.write_byte(address,a0)
 				value = bus.read_byte(address)
-				tensionOut = (vRef*value)/255
+				tensionOut = (vRef*value)/255.0
 				tensionData.append(tensionOut)
 				#print(tensionOut)
 #				time.sleep(0.1)
@@ -92,7 +92,7 @@ def readSensor(endpoint):
 				# Leer sensor Desplazamiento
 				bus.write_byte(address,a2)
 				value = bus.read_byte(address)
-				desplazamientoOut = (vRef*value)/255
+				desplazamientoOut = (vRef*value)/255.0
 				desplazamientoData.append(desplazamientoOut)
 #				print(desplazamientoOut)
 #				time.sleep(0.1)
@@ -117,8 +117,8 @@ def readSensor(endpoint):
 			headers={'Content-Type':"application/json"}
 			print(data2send)
 
-			response= requests.request("POST",url=endpoint,data=data2send,headers=headers)
-			print(response)
+#			response= requests.request("POST",url=endpoint,data=data2send,headers=headers)
+#			print(response)
 
 def requestAPI(endpoint):
 	global startR
