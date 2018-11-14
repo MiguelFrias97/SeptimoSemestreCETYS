@@ -133,7 +133,7 @@ def requestAPI(endpoint):
 		r = requests.get(url=endpoint)
 		data = int(r.text[1:2])
 		lock.acquire()
-		print(startR)
+#		print(startR)
 		if data == 1:
 			startR = True
 			stopR = False
