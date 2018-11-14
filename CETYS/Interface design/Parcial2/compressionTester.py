@@ -140,7 +140,7 @@ def requestAPI(endpoint):
 		elif data == 0:
 			stopR = True
 			startR = False
-		print(startR)
+#		print(startR)
 		lock.release()
 
 		time.sleep(0.1)
