@@ -56,6 +56,10 @@ def readSensor(endpoint):
 
 	bus = smbus.SMBus(1)
 
+	vfoff = 5.15
+	av = 470
+	forceConstant = 33.88
+
 	while True:
 		#print("Lectura de sensor: ",startR)
 		if startR:
@@ -77,7 +81,7 @@ def readSensor(endpoint):
 				bus.write_byte(address,a0)
 				value = bus.read_byte(address)
 				tensionOut = (vRef*value)/255.0
-				tensionOut = (((tensionOut-5.15)/470)*(11E-3))*(10*3.388E-3)
+				tensionOut = ((tensionOut-vfoff)/av)*1000*forceConstant
 				tensionData.append(tensionOut)
 				#print(tensionOut)
 #				time.sleep(0.1)
