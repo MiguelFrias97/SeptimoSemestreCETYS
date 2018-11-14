@@ -41,9 +41,9 @@ def readSensor(endpoint):
 
 	# Direcciones sensores
 	# Tension
-	a0 = 0x40
+	a0 = 0x41
 	# Compresion
-	a1 = 0x41
+	a1 = 0x40
 	# Desplazamiento
 	a2 = 0x42
 	## a3 = 0x43
@@ -82,7 +82,8 @@ def readSensor(endpoint):
 				value = bus.read_byte(address)
 				tensionOut = (vRef*value)/255.0
 				tensionOut = ((tensionOut-vfoff)/av)*1000*forceConstant
-				tensionData.append(tensionOut)
+				tensionData.append(value)
+#				tensionData.append(tensionOut)
 				#print(tensionOut)
 #				time.sleep(0.1)
 
@@ -99,7 +100,8 @@ def readSensor(endpoint):
 				value = bus.read_byte(address)
 				desplazamientoOut = (vRef*value)/255.0
 				desplazamientoOut = (desplazamientoOut*4)/8
-				desplazamientoData.append(desplazamientoOut)
+				desplazamientoData.append(value)
+				#desplazamientoData.append(desplazamientoOut)
 #				print(desplazamientoOut)
 #				time.sleep(0.1)
 
