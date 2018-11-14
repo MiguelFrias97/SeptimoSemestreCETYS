@@ -98,7 +98,7 @@ def readSensor(endpoint):
 				bus.write_byte(address,a2)
 				value = bus.read_byte(address)
 				desplazamientoOut = (vRef*value)/255.0
-				desplazamiento = (desplazamientoOut*4)/8
+				desplazamientoOut = (desplazamientoOut*4)/8
 				desplazamientoData.append(desplazamientoOut)
 #				print(desplazamientoOut)
 #				time.sleep(0.1)
