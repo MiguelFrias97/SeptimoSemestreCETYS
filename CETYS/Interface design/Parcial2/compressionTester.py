@@ -41,9 +41,9 @@ def readSensor(endpoint):
 
 	# Direcciones sensores
 	# Tension
-	a0 = 0x41
+	a0 = 0x40
 	# Compresion
-	a1 = 0x40
+	a1 = 0x41
 	# Desplazamiento
 	a2 = 0x42
 	## a3 = 0x43
@@ -61,7 +61,6 @@ def readSensor(endpoint):
 	forceConstant = 33.88
 
 	while True:
-		#print("Lectura de sensor: ",startR)
 		if startR:
 #		if gpio.input(startPin):
 			id = counter()
@@ -72,8 +71,6 @@ def readSensor(endpoint):
 			data = {}
 			start = time.time()
 			while True:
-				#lock.acquire()
-				#lock.release()
 				if stopR:
 #				if gpio.input(stopPin):
 					break
@@ -82,31 +79,18 @@ def readSensor(endpoint):
 				value = bus.read_byte(address)
 				tensionOut = (vRef*value)/255.0
 				tensionOut = ((tensionOut-vfoff)/av)*1000*forceConstant
-				tensionData.append(value)
-#				tensionData.append(tensionOut)
-				#print(tensionOut)
-#				time.sleep(0.1)
-
-				# Leer sensor Compresion
-#				bus.write_byte(address, a1)
-#				value = bus.read_byte(address)
-#				compresionOut = (vRef*value)/255
-#				compresionData.append(compresionOut)
-#				print(compresionOut)
-#				time.sleep(0.1)
+#				tensionData.append(value)
+				tensionData.append(tensionOut)
 
 				# Leer sensor Desplazamiento
-				bus.write_byte(address,a2)
+				bus.write_byte(address,a1)
 				value = bus.read_byte(address)
 				desplazamientoOut = (vRef*value)/255.0
 				desplazamientoOut = (desplazamientoOut*4)/8
-				desplazamientoData.append(value)
-				#desplazamientoData.append(desplazamientoOut)
-#				print(desplazamientoOut)
-#				time.sleep(0.1)
+#				desplazamientoData.append(value)
+				desplazamientoData.append(desplazamientoOut)
 
 				time.sleep(0.1)
-				#print ("")
 			lock.acquire()
 			startR = False
 			stopR = False
@@ -115,10 +99,8 @@ def readSensor(endpoint):
 			final = time.time()
 			timePassed = final - start
 			data['id']= id
-			#data['timePassed'] = timePassed
 			data['date']=datetime.datetime.now().strftime("%d/%-m/%Y %H:%M:%S")
 			data['strain'] = tensionData
-			#data['compresion'] = compresionData
 			data['displacement'] = desplazamientoData
 
 			data2send = json.dumps(data)
@@ -133,41 +115,23 @@ def requestAPI(endpoint):
 	global stopR
 	while True:
 		r = requests.get(url=endpoint)
-		data = int(r.text[1:2])
+		data = json.loads(r.text)
+		# TODO: Finish filename and state readings from json GET request
 		lock.acquire()
-#		print(startR)
 		if data == 1:
 			startR = True
 			stopR = False
 		elif data == 0:
 			stopR = True
 			startR = False
-#		print(startR)
 		lock.release()
 
 		time.sleep(0.1)
 
-def PowerOn():
-	global startR
-	global stopR
-	while True:
-		lock.acquire()
-		if gpio.input(startPin):
-			startR=True
-			stopR=False
-		elif gpio.input(stopPint):
-			startR=False
-			stopR=True
-		lock.release()
-		time.sleep(0.1)
 
 if __name__=="__main__":
-	#endpoint =' https://query.yahooapis.com/v1/public/yql?q=select%20*%20from%20weather.forecast%20where%20woeid%20in%20(select%20woeid%20from%20geo.places(1)%20where%20text%3D%22tijuana%22)&format=json&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys'
 	endpoint = 'http://10.12.10.191/API/Test'
 
-#	startR = False
-#	stopR = False
-#	lock = Lock()
 
 	threads = []
 
@@ -179,10 +143,3 @@ if __name__=="__main__":
 	threads.append(tRead)
 	tRead.start()
 
-#	tReadManual = Thread(target=PowerOn)
-#	threads.append(tReadManual)
-#	tReadManual.start()
-#	if gpio.input(startPin):
-#		for thread in threads:
-#			thread.join()
-#
