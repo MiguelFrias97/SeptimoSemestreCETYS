@@ -11,6 +11,7 @@ from threading import *
 startR = False
 stopR = False
 lock = Lock()
+material = "111"
 
 def counter():
 	try:
@@ -29,6 +30,7 @@ def counter():
 def readSensor(endpoint):
 	global startR
 	global stopR
+        global material
 	# Setting GPIO
 	gpio.setmode(gpio.BOARD)
 	gpio.setwarnings(False)
@@ -62,6 +64,7 @@ def readSensor(endpoint):
 
 	while True:
 		if startR:
+                        print "Starting Test"
 #		if gpio.input(startPin):
 			id = counter()
 			print('iniciar Sample')
@@ -98,7 +101,7 @@ def readSensor(endpoint):
 			print('preparando para enviar')
 			final = time.time()
 			timePassed = final - start
-			data['id']= id
+			data['id'] = material + str(id)
 			data['date']=datetime.datetime.now().strftime("%d/%-m/%Y %H:%M:%S")
 			data['strain'] = tensionData
 			data['displacement'] = desplazamientoData
@@ -106,22 +109,26 @@ def readSensor(endpoint):
 			data2send = json.dumps(data)
 			headers={'Content-Type':"application/json"}
 			print(data2send)
-
+                        
 			response= requests.request("POST",url=endpoint,data=data2send,headers=headers)
 			print(response)
-
+                        print(data["id"])
 def requestAPI(endpoint):
 	global startR
 	global stopR
+        global material
 	while True:
 		r = requests.get(url=endpoint)
-		data = json.loads(r.text)
+		data = json.loads(str(r.text))
 		# TODO: Finish filename and state readings from json GET request
-		lock.acquire()
-		if data == 1:
+		testState = int(data["TestState"])
+		material = data["Material"]
+
+                lock.acquire()
+		if testState == 1:
 			startR = True
 			stopR = False
-		elif data == 0:
+		elif testState == 0:
 			stopR = True
 			startR = False
 		lock.release()
@@ -131,7 +138,6 @@ def requestAPI(endpoint):
 
 if __name__=="__main__":
 	endpoint = 'http://10.12.10.191/API/Test'
-
 
 	threads = []
 
