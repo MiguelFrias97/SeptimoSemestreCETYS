@@ -52,7 +52,7 @@ def carControl():
 	global controlJson
 
 	gpio.setmode(gpio.BOARD)
-	gpio.setwarinings(False)
+	gpio.setwarnings(False)
 
 	# Setting LED's
 	lPosterior1 = 18
@@ -60,8 +60,8 @@ def carControl():
 	gpio.setup(lPosterior1,gpio.OUT)
 	gpio.setup(lPosterior2,gpio.OUT)
 
-	lTrasera1 = 20
-	lTrasera2 = 21
+	lTrasera1 = 29
+	lTrasera2 = 31
 	gpio.setup(lTrasera1,gpio.OUT)
 	gpio.setup(lTrasera2,gpio.OUT)
 
@@ -99,14 +99,14 @@ def carControl():
 			direccion = control["direccion"]
 			lPosteriores = control["luces"]["posteriores"]
 			lTraseras = control["luces"]["traseras"]
-			if lPosteriores:
+			if lPosteriores == 1:
 				gpio.output(lPosterior1,gpio.HIGH)
 				gpio.output(lPosterior2,gpio.HIGH)
 				# Encender luces posteriores
 			else:
 				gpio.output(lPosterior1,gpio.LOW)
 				gpio.output(lPosterior2,gpio.LOW)
-			if lTraseras:
+			if lTraseras == 1:
 				# Encender luces traseras
 				gpio.output(lTrasera1,gpio.HIGH)
                                 gpio.output(lTrasera2,gpio.HIGH)
