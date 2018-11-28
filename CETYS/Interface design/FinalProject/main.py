@@ -4,6 +4,8 @@ import json
 import time
 import socket
 import sys
+import RPi.GPIO as gpio
+
 
 controlJson = '{}'
 lock = Lock()
@@ -48,6 +50,43 @@ def socketCommunication():
 
 def carControl():
 	global controlJson
+
+	gpio.setmode(gpio.BOARD)
+	gpio.setwarinings(False)
+
+	# Setting LED's
+	lPosterior1 = 18
+	lPosterior2 = 19
+	gpio.setup(lPosterior1,gpio.OUT)
+	gpio.setup(lPosterior2,gpio.OUT)
+
+	lTrasera1 = 20
+	lTrasera2 = 21
+	gpio.setup(lTrasera1,gpio.OUT)
+	gpio.setup(lTrasera2,gpio.OUT)
+
+	lReversa1 = 22
+	lReversa2 = 23
+	gpio.setup(lReversa1,gpio.OUT)
+	gpio.setup(lReversa2,gpio.OUT)
+
+	# Setting Motor 1
+	motor1_f = 8
+	motor1_b = 10
+	gpio.setup(motor1_f, gpio.OUT)
+	gpio.setup(motor1_b, gpio.OUT)
+
+	motor1_forward = gpio.PWM(motor1_f, 50)
+	motor1_backward = gpio.PWM(motor1_b, 50)
+
+	#Setting Motor 2
+	motor2_f = 12
+	motor2_b = 16
+	gpio.setup(motor2_f, gpio.OUT)
+	gpio.setup(motor2_b, gpio.OUT)
+
+	motor2_forward = gpio.PWM(motor2_f, 50)
+	motor2_backward = gpio.PWM(motor2_b, 50)
 	while True:
 		control = '{}'
 		lock.acquire()
@@ -61,28 +100,65 @@ def carControl():
 			lPosteriores = control["luces"]["posteriores"]
 			lTraseras = control["luces"]["traseras"]
 			if lPosteriores:
-				pass
+				gpio.output(lPosterior1,gpio.HIGH)
+				gpio.output(lPosterior2,gpio.HIGH)
 				# Encender luces posteriores
-			elif lTraseras:
-				pass
+			else:
+				gpio.output(lPosterior1,gpio.LOW)
+				gpio.output(lPosterior2,gpio.LOW)
+			if lTraseras:
 				# Encender luces traseras
+				gpio.output(lTrasera1,gpio.HIGH)
+                                gpio.output(lTrasera2,gpio.HIGH)
+                                # Encender luces posteriores
+                        else:
+                                gpio.output(lTrasera1,gpio.LOW)
+                                gpio.output(lTrasera2,gpio.LOW)
 			if estado == "avanzar":
+				gpio.output(lReversa1,gpio.LOW)
+				gpio.output(lReversa2,gpio.LOW)
+
+				motor1_forward.stop()
+				motor2_forward.stop()
+				motor1_backward.stop()
+				motor2_backward.stop()
+				time.sleep(0.1)
 				if direccion == "vertical":
-					pass
+					motor1_forward.start(50)
+					motor2_forward.start(50)
 				elif direccion == "izquierda":
-					pass
+					motor1_backward.start(50)
+					motor2_forward.start(50)
 				elif direccion == "derecha":
-					pass
+					motor1_forward.start(50)
+					motor2_backward.start(50)
 			elif estado == "detener":
 				# Apagar motores
+				gpio.output(lReversa1,gpio.LOW)
+                                gpio.output(lReversa2,gpio.LOW)
+
+                                motor1_forward.stop()
+                                motor2_forward.stop()
+                                motor1_backward.stop()
+                                motor2_backward.stop()
 			elif estado = "reversa":
 				# Encender luces de reversa
+				gpio.output(lReversa1,gpio.HIGH)
+                                gpio.output(lReversa2,gpio.HIGH)
+
+                                motor1_forward.stop()
+                                motor2_forward.stop()
+                                motor1_backward.stop()
+                                motor2_backward.stop()
 				if direccion == "vertical":
-					pass
+					motor1_backward.start(50)
+                                        motor2_backward.start(50)
 				elif direccion == "izquierda":
-					pass
+					motor1_backward.start(50)
+                                        motor2_forward.start(50)
 				elif direccion == "derecha":
-					pass
+					motor1_forward.start(50)
+                                        motor2_backward.start(50)
 
 if __name__=="__main__":
 	threads = []
