@@ -56,6 +56,33 @@ def carControl():
 
 		if len(control)>0:
 			print(control)
+			estado = control["estado"]
+			direccion = control["direccion"]
+			lPosteriores = control["luces"]["posteriores"]
+			lTraseras = control["luces"]["traseras"]
+			if lPosteriores:
+				pass
+				# Encender luces posteriores
+			elif lTraseras:
+				pass
+				# Encender luces traseras
+			if estado == "avanzar":
+				if direccion == "vertical":
+					pass
+				elif direccion == "izquierda":
+					pass
+				elif direccion == "derecha":
+					pass
+			elif estado == "detener":
+				# Apagar motores
+			elif estado = "reversa":
+				# Encender luces de reversa
+				if direccion == "vertical":
+					pass
+				elif direccion == "izquierda":
+					pass
+				elif direccion == "derecha":
+					pass
 
 if __name__=="__main__":
 	threads = []
