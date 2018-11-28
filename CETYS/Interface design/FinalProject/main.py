@@ -97,8 +97,8 @@ def carControl():
 			print(control)
 			estado = control["estado"]
 			direccion = control["direccion"]
-			lPosteriores = control["luces"]["posteriores"]
-			lTraseras = control["luces"]["traseras"]
+			lPosteriores = int(control["luces"]["posteriores"])
+			lTraseras = int(control["luces"]["traseras"])
 			if lPosteriores == 1:
 				gpio.output(lPosterior1,gpio.HIGH)
 				gpio.output(lPosterior2,gpio.HIGH)
