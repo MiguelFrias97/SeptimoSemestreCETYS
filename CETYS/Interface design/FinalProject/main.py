@@ -193,4 +193,5 @@ if __name__=="__main__":
 	threads.append(tSocket)
 	tSocket.start()
 
-
+	for thread in threads:
+		thread.join()
