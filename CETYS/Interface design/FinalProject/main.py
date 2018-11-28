@@ -10,6 +10,7 @@ import RPi.GPIO as gpio
 
 controlJson = {}
 lock = Lock()
+lock2 = Lock()
 pararC = False
 
 def socketCommunication():
