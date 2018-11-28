@@ -32,6 +32,10 @@ def socketCommunication():
 			while True:
 				data = connection.recv(1024)
 #				print('received {!r}'.format(data))
+				lock.acquire()
+				controlJson = data
+				lock.release()
+#				print(controlJson)
 				if data:
 #					print('sending data back to the client')
 					connection.sendall(data)
@@ -44,7 +48,7 @@ def socketCommunication():
 
 def carControl():
 	global controlJson
-	pass
+	index = 0
 
 if __name__=="__main__":
 	threads = []
