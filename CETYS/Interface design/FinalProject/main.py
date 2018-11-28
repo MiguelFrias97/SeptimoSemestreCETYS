@@ -5,7 +5,7 @@ import time
 import socket
 import sys
 
-controlJson = ""
+controlJson = '{}'
 lock = Lock()
 
 def socketCommunication():
@@ -48,7 +48,15 @@ def socketCommunication():
 
 def carControl():
 	global controlJson
-	index = 0
+	while True:
+		control = '{}'
+		lock.acquire()
+		control = json.loads(str(controlJson))
+		lock.release()
+
+		if len(control)>0:
+			print(control)
+			break
 
 if __name__=="__main__":
 	threads = []
