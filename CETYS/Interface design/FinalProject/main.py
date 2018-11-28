@@ -56,7 +56,6 @@ def carControl():
 
 		if len(control)>0:
 			print(control)
-			break
 
 if __name__=="__main__":
 	threads = []
