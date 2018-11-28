@@ -141,7 +141,7 @@ def carControl():
                                 motor2_forward.stop()
                                 motor1_backward.stop()
                                 motor2_backward.stop()
-			elif estado = "reversa":
+			elif estado == "reversa":
 				# Encender luces de reversa
 				gpio.output(lReversa1,gpio.HIGH)
                                 gpio.output(lReversa2,gpio.HIGH)
