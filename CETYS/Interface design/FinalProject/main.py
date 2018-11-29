@@ -56,6 +56,7 @@ def socketCommunication():
 		finally:
             # Clean up the connection
 			connection.close()
+	connection.close()
 
 def carControl():
 	global controlJson
