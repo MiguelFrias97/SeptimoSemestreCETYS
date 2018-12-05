@@ -20,7 +20,7 @@ def socketCommunication():
 	sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
     # Bind the socket to the port
-	server_address = ('', 9000)
+	server_address = ('', 5000)
 #	print('starting up on {} port {}'.format(*server_address))
 	sock.bind(server_address)
 
@@ -28,8 +28,8 @@ def socketCommunication():
 	sock.listen(1)
 
 	while True:
-		if pararC:
-			break
+#		if pararC:
+#			break
         # Wait for a connection
 #		print('waiting for a connection')
 		connection, client_address = sock.accept()
@@ -149,10 +149,10 @@ def carControl():
 				if direccion == "vertical":
 					motor1_forward.start(50)
 					motor2_forward.start(50)
-				elif direccion == "izquierda":
+				elif direccion == "derecha":
 					motor1_backward.start(50)
 					motor2_forward.start(50)
-				elif direccion == "derecha":
+				elif direccion == "izquierda":
 					motor1_forward.start(50)
 					motor2_backward.start(50)
 			elif estado == "detener":
@@ -173,13 +173,14 @@ def carControl():
 				motor2_forward.stop()
 				motor1_backward.stop()
 				motor2_backward.stop()
+				time.sleep(0.5)
 				if direccion == "vertical":
 					motor1_backward.start(50)
 					motor2_backward.start(50)
-				elif direccion == "izquierda":
+				elif direccion == "derecha":
 					motor1_backward.start(50)
 					motor2_forward.start(50)
-				elif direccion == "derecha":
+				elif direccion == "izquierda":
 					motor1_forward.start(50)
 					motor2_backward.start(50)
 
