@@ -123,7 +123,7 @@ def requestAPI(endpoint):
 		# TODO: Finish filename and state readings from json GET request
 		testState = int(data["TestState"])
 		material = data["Material"]
-
+                print(material)
                 lock.acquire()
 		if testState == 1:
 			startR = True
